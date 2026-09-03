@@ -17,7 +17,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Arun Prabu Appaiyan — Engineering Notebook",
+  title: "Rajavelavan Appaiyachetty",
   description:
     "A single-page field notebook: building full-stack systems end to end, shipping them to the cloud, and moving into AI engineering.",
 };

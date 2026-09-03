@@ -1,12 +1,14 @@
 import type { Project } from "@/types/project";
 import { getProjectBySlug, getProjectsByType } from "@/lib/projects";
+import { ArchitectureDiagram } from "@/components/projects/architecture-diagram";
+import { StackDiagram } from "@/components/projects/stack-diagram";
 
 /* ------------------------------------------------------------------
    TODO: confirm display name / links before publishing.
    ------------------------------------------------------------------ */
-const NAME = "Arun Prabu Appaiyan";
+const NAME = "Rajavelavan Appaiyachetty";
 const CONTACT = {
-  email: "arunprabuappaiyan@gmail.com",
+  email: "appaiya.raja@gmail.com",
   github: "https://github.com/", // TODO: real handle
   linkedin: "https://www.linkedin.com/", // TODO: real handle
 };
@@ -85,13 +87,13 @@ function ProjectCard({ project }: { project: Project }) {
 }
 
 /** Sticky-scroll deep dive: the narrative pins to the side while the
- *  stacked sketch placeholders scroll past it. */
+ *  stacked diagrams scroll past it. */
 function DeepDive({
   project,
-  sketches,
+  children,
 }: {
   project: Project;
-  sketches: string[];
+  children: React.ReactNode;
 }) {
   return (
     <div className="grid gap-10 md:grid-cols-[minmax(0,20rem)_1fr] md:items-start md:gap-16">
@@ -120,11 +122,7 @@ function DeepDive({
       </div>
 
       {/* scrolling diagrams */}
-      <div className="space-y-14 md:space-y-28">
-        {sketches.map((s) => (
-          <Sketch key={s} caption={s} />
-        ))}
-      </div>
+      <div className="space-y-14 md:space-y-28">{children}</div>
     </div>
   );
 }
@@ -293,24 +291,16 @@ export default function Home() {
         >
           <div className="space-y-28 md:space-y-40">
             {fileUpload ? (
-              <DeepDive
-                project={fileUpload}
-                sketches={[
-                  "upload path — client requests a pre-signed URL, streams the file straight to S3, writes metadata to MongoDB",
-                  "analysis pipeline — S3 object → text extraction → OpenAI summarisation → stored analysis keyed to the object",
-                  "retrieval Q&A — question → pull relevant chunks → answer grounded in the file's contents",
-                ]}
-              />
+              <DeepDive project={fileUpload}>
+                <ArchitectureDiagram />
+              </DeepDive>
             ) : null}
             {secAgent ? (
-              <DeepDive
-                project={secAgent}
-                sketches={[
-                  "ingestion — alert source → FastAPI endpoint → normalised finding on a queue",
-                  "agent loop — LangChain orchestrates Gemini: reason → call an enrichment/remediation tool → observe → repeat",
-                  "human-in-the-loop — proposed remediation → approval gate → execute, with the full reasoning trace on the dashboard",
-                ]}
-              />
+              <DeepDive project={secAgent}>
+                <Sketch caption="ingestion — alert source → FastAPI endpoint → normalised finding on a queue" />
+                <Sketch caption="agent loop — LangChain orchestrates Gemini: reason → call an enrichment/remediation tool → observe → repeat" />
+                <Sketch caption="human-in-the-loop — proposed remediation → approval gate → execute, with the full reasoning trace on the dashboard" />
+              </DeepDive>
             ) : null}
           </div>
         </Chapter>
@@ -360,10 +350,7 @@ export default function Home() {
 
               {/* scrolling diagrams */}
               <div className="space-y-14 md:space-y-28">
-                <Sketch caption="two clients, one API — React + PrimeReact admin panel and the mobile storefront both hit a single Express service" />
-                <Sketch caption="one feature, top to bottom — PrimeReact form → Express route → Knex query builder → MySQL row" />
-                <Sketch caption="the relational core — inventory, gold-scheme (chit) definitions, and customer enrollments, with explicit migrations" />
-                <Sketch caption="the contract — Swagger / OpenAPI as the one source of truth both clients build against" />
+                <StackDiagram />
               </div>
             </div>
           ) : null}
