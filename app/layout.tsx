@@ -29,6 +29,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${caveat.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-canvas text-ink">
+        <div className="fixed top-4 right-4 z-50 text-md font-bold text-ink-dim font-hand">
+          Subject to change - under development
+        </div>
         {children}
       </body>
     </html>
