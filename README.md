@@ -20,6 +20,13 @@ scrolling route** (`/`): a cover plus eight numbered chapters, not the multi-rou
 (`/projects/[slug]`, `/experiments`) structure originally sketched. See
 [Phase 2 — the sketchbook UI & design system](#phase-2--the-sketchbook-ui--design-system).
 
+**Phase 3 complete** — the interactive Sketch Engine. The `.sketch-placeholder` slots in chapters
+**03** and **04** are replaced with real hand-drawn diagrams that draw themselves on scroll —
+generated in the browser with **Rough.js**, animated with **Framer Motion**. The engine
+(`components/ui/animated-sketch.tsx`) is factored out and exported so the remaining slots can be
+filled the same way. See
+[Phase 3 — the interactive Sketch Engine](#phase-3--the-interactive-sketch-engine).
+
 ## Tech stack
 
 | Layer | Choice |
@@ -29,8 +36,8 @@ scrolling route** (`/`): a cover plus eight numbered chapters, not the multi-rou
 | Language | TypeScript 5.9 (strict mode) |
 | Styling | Tailwind CSS 4 (`@tailwindcss/postcss`) |
 | Fonts | `next/font/google` — Caveat (handwriting) + JetBrains Mono (technical), both variable |
-| Animation | `framer-motion` ^13.2.0 — scroll-linked draw-on, reduced-motion aware _(Phase 2)_ |
-| Sketch rendering | `roughjs` ^4.6.6 — hand-drawn SVG for the architecture & stack diagrams _(Phase 2)_ |
+| Animation | `framer-motion` ^13.2.0 — scroll-linked draw-on, reduced-motion aware _(Phase 3)_ |
+| Sketch rendering | `roughjs` ^4.6.6 — hand-drawn SVG for the architecture & stack diagrams _(Phase 3)_ |
 | Linting | ESLint 9 (`eslint-config-next`) |
 | Package manager | pnpm 10 (pinned via `packageManager`) |
 | Dev bundler | Turbopack |
@@ -75,10 +82,10 @@ app/
 components/
   layout/                         # empty (.gitkeep) — page.tsx inlines its own <main>/<footer>
   projects/
-    architecture-diagram.tsx      # <ArchitectureDiagram/> — file-upload system, Rough.js  (Phase 2)
-    stack-diagram.tsx             # <StackDiagram/> — Jewelry Merchant Platform stack       (Phase 2)
+    architecture-diagram.tsx      # <ArchitectureDiagram/> — file-upload system, Rough.js  (Phase 3)
+    stack-diagram.tsx             # <StackDiagram/> — Jewelry Merchant Platform stack       (Phase 3)
   ui/
-    animated-sketch.tsx           # the scroll-driven Rough.js + framer-motion engine       (Phase 2)
+    animated-sketch.tsx           # the scroll-driven Rough.js + framer-motion engine       (Phase 3)
 data/
   projects.ts                     # single source of truth — the typed project array
 lib/
@@ -272,35 +279,10 @@ Everything sits in an `mx-auto max-w-5xl` container.
 | 07 | `notebook` | Engineering Notebook — "Notes on what I'm learning now." | `learningNotes` (5 dated one-line entries) | 1× `Sketch` |
 | 08 | `contact` | Contact — "Close the notebook — let's talk." | `CONTACT` | — |
 
-### Animated diagrams — `components/`
+### Animated diagrams
 
-The two real diagrams are drawn on the fly with **Rough.js** and animated with **framer-motion**;
-`components/ui/animated-sketch.tsx` is the shared engine, `components/projects/*` are the concrete
-diagrams. All three are Client Components (`"use client"`).
-
-**`components/ui/animated-sketch.tsx`** exports:
-
-| Export | Purpose |
-| --- | --- |
-| `AnimatedSketch` | wrapper that renders one `<svg role="img" aria-label={label}>` and provides scroll progress to its children. Creates a `rough.generator` with a **fixed `seed`** so the generated path data is identical on server and client and hydrates without `next/dynamic` / `ssr:false`. Scroll position comes from `useScroll` + `useTransform`; `prefers-reduced-motion` is read via `useReducedMotion` behind a `useSyncExternalStore` hydration guard. |
-| `RoughShape` | a `rect` / `ellipse` / `line` / `polyline` / `path` spec → Rough drawable → one `motion.path` per stroke. Outlines animate `pathLength`, hachure-fill regions animate `opacity`, both keyed to a `draw={[start, end]}` slice of scroll progress. |
-| `RoughArrow` | a shaft (first 60% of its `draw` range) plus a hand-drawn arrowhead polyline (last 40%). |
-| `SketchText` | a `motion.text` label in the `hand` or `mono` variant that fades in over its `draw` range. |
-| `SKETCH_PALETTE` | maps `ink` / `inkDim` / `accent` / `accentWarm` / `edge` / `raised` to the raw `:root` CSS vars (the `@theme` `--color-*` vars are not emitted at runtime). |
-
-Under `prefers-reduced-motion` every animated value snaps straight to its finished state — the
-diagrams render fully, just without the draw-on.
-
-**`components/projects/architecture-diagram.tsx`** — `<ArchitectureDiagram/>` (named export, no
-props). The File Upload System: three node boxes — Next.js route handler → AWS S3 → OpenAI — in
-ballpoint-blue hachure, forward arrows labelled "pre-signed PUT" and "object → prompt", and a
-warm-accent response path looping back to the Next.js box ("summary · grounded answers").
-`viewBox="0 0 820 340"`, `seed={13}`.
-
-**`components/projects/stack-diagram.tsx`** — `<StackDiagram/>` (named export, no props). The
-Jewelry Merchant Platform stack: three stacked layers — React + PrimeReact / Express · Node.js /
-Knex.js → MySQL — in warm-accent hachure, joined by vertical arrows ("HTTP · JSON", "SQL via
-Knex"), with a mono caption for the relational core. `viewBox="0 0 820 430"`, `seed={71}`.
+The two real diagrams, and the engine that draws them, shipped in Phase 3 — see
+[Phase 3 — the interactive Sketch Engine](#phase-3--the-interactive-sketch-engine).
 
 ### Still placeholder
 
@@ -310,6 +292,111 @@ Honest list of what Phase 2 leaves for later:
   real diagrams.
 - `NAME`, `CONTACT.github`, and `CONTACT.linkedin` in `app/page.tsx` are `TODO` placeholders.
 - No `components/layout` shell, no per-project routes, no assets in `public/sketches/`.
+
+## Phase 3 — the interactive Sketch Engine
+
+Phase 3 replaces the two most load-bearing `.sketch-placeholder` slots — the file-upload deep dive
+in chapter **03** and the Jewelry Merchant stack in chapter **04** — with real hand-drawn diagrams
+that draw themselves on scroll. The geometry is generated in the browser with **Rough.js** and
+animated with **Framer Motion**; the shared engine is factored out so the remaining placeholder
+slots can be filled the same way with no new infrastructure.
+
+All three files are Client Components (`"use client"`). `app/page.tsx` stays a **React Server
+Component** and imports them directly as client entry points — no `next/dynamic`, no `ssr: false`.
+
+### Strict rules, and how each is met
+
+| Requirement | Implementation |
+| --- | --- |
+| No hydration mismatch | `rough.generator()` is seeded with a **fixed integer** per diagram. Rough.js's roughening PRNG is a pure-JS seeded LCG, so every generated `<path d="…">` string is byte-identical on the server and the client. The diagrams render into the SSR HTML and hydrate with no `next/dynamic` / `ssr: false` bail-out. |
+| Mobile scaling | Every `<svg>` sets a coordinate-space `viewBox`, `preserveAspectRatio="xMidYMid meet"`, and `class="block h-auto w-full"` — no fixed pixel width. The drawing scales to its column and is never cropped or distorted. |
+| Scroll-linked drawing | `useScroll({ target, offset })` yields a `0 → 1` progress value as the figure crosses the viewport; `useTransform` maps a per-shape slice of that progress onto each stroke's `pathLength`. |
+| Reduced motion | `useReducedMotion()` is read behind a hydration guard. When set, every animated `pathLength` / `opacity` is pinned to `1` — the diagram renders fully drawn, with no animation. |
+
+### The engine — `components/ui/animated-sketch.tsx`
+
+| Export | Purpose |
+| --- | --- |
+| `AnimatedSketch` | Renders one `<svg role="img" aria-label={label}>` and hands scroll progress + the Rough.js generator to its children through React context. Props: `viewBox`, `label`, `seed?` (default `1`), `offset?` (default `["start 0.85", "end 0.3"]`), `className?`. |
+| `RoughShape` | A `rect` / `ellipse` / `line` / `polyline` / `path` spec → a Rough drawable → one `motion.path` per stroke Rough.js emits. Outline strokes animate `pathLength`; hachure-fill strokes animate `opacity`. Draws over its `draw={[start, end]}` slice of the parent progress. Takes its own `seed` so repeated geometry still varies by hand. |
+| `RoughArrow` | A shaft (`RoughShape` line over the first 60% of its `draw` range) plus a hand-drawn arrowhead (`polyline` over the last 40%, on `seed + 7`). |
+| `SketchText` | A `motion.text` label in the `hand` (Caveat) or `mono` (JetBrains Mono) variant that fades in over its `draw` range. |
+| `SKETCH_PALETTE` | Maps `ink` / `inkDim` / `accent` / `accentWarm` / `edge` / `raised` to the raw `:root` CSS custom properties (`var(--ink)` …). The `@theme inline` `--color-*` tokens are not emitted at runtime, so the SVG references the `:root` vars directly. |
+| types | `RoughShapeSpec`, `AnimatedSketchProps`, `RoughShapeProps`, `RoughArrowProps`, `SketchTextProps` are all exported for downstream diagrams. |
+
+**Deterministic geometry.** `AnimatedSketch` builds its generator once, memoised on `seed`:
+
+```ts
+rough.generator({ options: { seed, roughness: 1.35, bowing: 1.1, strokeWidth: 1.6 } })
+```
+
+Because the seed is constant across renders and machines, server and client produce identical path
+data. Scroll progress is `0` on the server and on the first client paint, so the `pathLength`
+attributes Framer Motion serialises (`stroke-dasharray` / `stroke-dashoffset`) match too.
+
+**Context plumbing.** `SketchContext` carries `{ generator, progress: MotionValue<number>,
+reducedMotion: boolean }`. `useSketch()` throws a clear error if `RoughShape` / `RoughArrow` /
+`SketchText` are rendered outside an `AnimatedSketch`.
+
+**Staggered draw-in.** Each child is handed a `draw={[start, end]}` pair in progress units.
+`useTransform(progress, [start, end], [0, 1], { clamp: true })` gives that child its own local
+`0 → 1`, so boxes, then labels, then arrows draw in sequence as the chapter scrolls — and reverse
+on scroll-up. `RoughShape` splits Rough.js's `toPaths()` output: entries with a real `fill`
+(`p.fill && p.fill !== "none"`) are solid regions and animate `opacity`; the rest are outline /
+hachure strokes and animate `pathLength`.
+
+**Reduced motion without a hydration mismatch.** `useReducedMotion()` reads `matchMedia`
+synchronously on the client, which would disagree with the server for a visitor who prefers reduced
+motion. It is gated behind `useHydrated()` — a `useSyncExternalStore` whose server snapshot is
+`false` and client snapshot is `true` (no `setState`-in-effect, which the React Compiler lint that
+`next dev` enables forbids). Server render equals first client render; the value flips once,
+post-hydration.
+
+**Type derivation.** Rough.js and Framer Motion don't expose their internal types through the
+package `exports` map under `moduleResolution: "bundler"`, so the engine derives what it needs from
+the public entry points with `ReturnType` / `Parameters` (`RoughGenerator`, `Drawable`, `PathInfo`,
+`RoughOptions`). `useScroll`'s `offset` type is derived the same way rather than typed
+`[string, string]`, which `useScroll` rejects.
+
+### The two diagrams — `components/projects/`
+
+**`<ArchitectureDiagram/>`** (`architecture-diagram.tsx`, named export, no props). The File Upload
+System, as a `<figure>` + `<figcaption>` drop-in for the old `<Sketch>`. `viewBox="0 0 820 340"`,
+`seed={13}`. Three node boxes — **Next.js** route handler → **AWS S3** object store → **OpenAI**
+analysis · Q&A — in ballpoint-blue (`--accent`) hachure (`{ hachureGap: 20, fillWeight: 0.5 }`),
+each box + its two labels staggered at `i * 0.22`. Forward arrows labelled "pre-signed PUT" and
+"object → prompt"; a warm-accent (`--accent-warm`) polyline response path loops from OpenAI back to
+the Next.js box, labelled "summary · grounded answers".
+
+**`<StackDiagram/>`** (`stack-diagram.tsx`, named export, no props). The Jewelry Merchant Platform
+stack. `viewBox="0 0 820 430"`, `seed={71}`. Three stacked layers — **React + PrimeReact** (admin
+panel · mobile storefront) / **Express · Node.js** (REST routes · OpenAPI contract) / **Knex.js →
+MySQL** (query builder · explicit migrations) — in warm-accent (`--accent-warm`) hachure, staggered
+at `i * 0.26`, joined by vertical arrows "HTTP · JSON" and "SQL via Knex", with a mono caption for
+the relational core ("inventory · gold-scheme definitions · customer enrollments").
+
+### Integration — `app/page.tsx`
+
+- `DeepDive` was generalised from `{ project, sketches: string[] }` to
+  `{ project, children: React.ReactNode }` — it is now a pure sticky-scroll layout (pinned
+  narrative column beside a scrolling content column) and no longer knows about sketches
+  specifically.
+- Chapter **03** — the `file-upload-ai-analysis` deep dive renders `<ArchitectureDiagram />` as its
+  only child (its three caption `<Sketch>`s removed). The `autonomous-cloud-security-agent` deep
+  dive is unchanged: its three `<Sketch caption="…" />`s are now passed as explicit children.
+- Chapter **04** — the organization block's scrolling column renders `<StackDiagram />` (its four
+  caption `<Sketch>`s removed).
+- `Sketch` and `.sketch-placeholder` stay in place for the cover and chapters **01, 05, 06, 07**
+  and the security-agent deep dive.
+
+### Dependencies
+
+```bash
+pnpm add roughjs framer-motion
+```
+
+`roughjs ^4.6.6` and `framer-motion ^13.2.0`, both runtime. No new dev dependencies; no
+`next.config.ts` change (Turbopack consumes both without `transpilePackages`).
 
 ## Verification
 
@@ -351,6 +438,26 @@ Manual walk-through — `pnpm dev`, open <http://localhost:3000>:
 - the `<ArchitectureDiagram/>` and `<StackDiagram/>` strokes draw on as they enter the viewport.
 - enable the OS "reduce motion" setting and reload — both diagrams render fully, without the
   draw-on animation.
+
+### Phase 3 checks
+
+```bash
+pnpm exec tsc --noEmit   # clean
+pnpm lint                # clean
+pnpm build               # succeeds — / stays prerendered static; the Rough.js
+                         # <path d="…"> markup is present in the server HTML
+```
+
+Manual walk-through — `pnpm dev`, open <http://localhost:3000>:
+
+- chapters **03** and **04** each show one framed hand-drawn diagram; boxes → labels → arrows draw
+  themselves in sequence as the chapter scrolls through the viewport, and reverse on scroll-up.
+- hard reload with DevTools open — no hydration-mismatch warnings; the `<svg>` and its `<path>`s
+  are present in view-source.
+- responsive mode at 375px — both SVGs scale to full width, nothing cropped or stretched, no
+  horizontal page scroll.
+- OS "reduce motion" on, then reload — both diagrams render fully drawn immediately, with no stroke
+  animation and no console warnings.
 
 ## Roadmap
 
