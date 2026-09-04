@@ -2,6 +2,8 @@ import type { Project } from "@/types/project";
 import { getProjectBySlug, getProjectsByType } from "@/lib/projects";
 import { ArchitectureDiagram } from "@/components/projects/architecture-diagram";
 import { StackDiagram } from "@/components/projects/stack-diagram";
+import { PixelProfile } from "@/components/ui/pixel-profile";
+import { GmailIcon, LinkedinIcon, DiscordIcon } from "@/components/ui/icons";
 
 /* ------------------------------------------------------------------
    TODO: confirm display name / links before publishing.
@@ -9,8 +11,8 @@ import { StackDiagram } from "@/components/projects/stack-diagram";
 const NAME = "Rajavelavan Appaiyachetty";
 const CONTACT = {
   email: "appaiya.raja@gmail.com",
-  github: "https://github.com/", // TODO: real handle
-  linkedin: "https://www.linkedin.com/", // TODO: real handle
+  linkedin: "#", // placeholder
+  discord: "#",  // placeholder
 };
 
 /* ==================================================================
@@ -212,22 +214,26 @@ export default function Home() {
           id="cover"
           className="flex min-h-[92vh] flex-col justify-center py-24"
         >
-          <p className="font-mono text-xs uppercase tracking-[0.4em] text-accent">
-            Field notebook · 2026
-          </p>
-          <h1 className="mt-6 font-hand text-6xl leading-[0.95] text-ink md:text-8xl">
-            Building systems,
-            <br />
-            end to end.
-          </h1>
-          <p className="mt-8 max-w-2xl text-sm leading-relaxed text-ink-dim md:text-base">
-            I&apos;m {NAME}, a full-stack engineer. This is a working notebook —
-            how I think about the whole path a request takes, from the pixel a
-            user clicks down through the API, the database, and the infrastructure
-            it all runs on. Lately the last chapter has been AI engineering.
-          </p>
-          <div className="mt-12 max-w-2xl">
-            <Sketch caption="cover sketch — the whole stack in one diagram: UI → API → DB → Infra" />
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-12">
+            <div className="flex-1">
+              <p className="font-mono text-xs uppercase tracking-[0.4em] text-accent">
+                Field notebook · 2026
+              </p>
+              <h1 className="mt-6 font-hand text-6xl leading-[0.95] text-ink md:text-8xl">
+                Building systems,
+                <br />
+                end to end.
+              </h1>
+              <p className="mt-8 max-w-2xl text-sm leading-relaxed text-ink-dim md:text-base">
+                I&apos;m {NAME}, a full-stack engineer. This is a working notebook —
+                how I think about the whole path a request takes, from the pixel a
+                user clicks down through the API, the database, and the infrastructure
+                it all runs on. Lately the last chapter has been AI engineering.
+              </p>
+            </div>
+            <div className="w-full max-w-sm shrink-0">
+              <PixelProfile />
+            </div>
           </div>
           <p className="mt-12 font-mono text-xs text-ink-dim">scroll ↓</p>
         </section>
@@ -497,53 +503,46 @@ export default function Home() {
           title="Close the notebook — let's talk."
           lead="If any chapter here matches something you're building, I'd like to hear about it."
         >
-          <div className="grid gap-10 md:grid-cols-2 md:gap-16">
-            <p className="text-sm leading-relaxed text-ink-dim md:text-base">
+          <div className="relative min-h-[120px] flex items-end">
+            <p className="text-sm leading-relaxed text-ink-dim md:text-base max-w-xl pr-16">
               I&apos;m looking for work where the whole path matters — where
               someone still has to hold the UI, the API, the data, and the
               infrastructure in one head — and increasingly where that head also
               has to reason about a model in the loop.
             </p>
-            <ul className="space-y-3 font-mono text-sm">
-              <li>
-                <span className="text-ink-dim">email — </span>
-                <a
-                  href={`mailto:${CONTACT.email}`}
-                  className="text-accent underline underline-offset-4 hover:text-ink"
-                >
-                  {CONTACT.email}
-                </a>
-              </li>
-              <li>
-                <span className="text-ink-dim">github — </span>
-                <a
-                  href={CONTACT.github}
-                  className="text-accent underline underline-offset-4 hover:text-ink"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {CONTACT.github}
-                </a>
-              </li>
-              <li>
-                <span className="text-ink-dim">linkedin — </span>
-                <a
-                  href={CONTACT.linkedin}
-                  className="text-accent underline underline-offset-4 hover:text-ink"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {CONTACT.linkedin}
-                </a>
-              </li>
-            </ul>
+            <div className="absolute bottom-0 right-0 flex flex-col gap-5">
+              <a
+                href={`mailto:${CONTACT.email}`}
+                className="text-ink-dim hover:text-accent transition-colors"
+                title="Email"
+              >
+                <GmailIcon className="w-6 h-6" />
+              </a>
+              <a
+                href={CONTACT.linkedin}
+                className="text-ink-dim hover:text-accent transition-colors"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="LinkedIn"
+              >
+                <LinkedinIcon className="w-6 h-6" />
+              </a>
+              <a
+                href={CONTACT.discord}
+                className="text-ink-dim hover:text-accent transition-colors"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Discord"
+              >
+                <DiscordIcon className="w-6 h-6" />
+              </a>
+            </div>
           </div>
         </Chapter>
 
         <footer className="border-t border-edge/50 py-12 font-mono text-xs text-ink-dim">
           <p>
-            {NAME} · compiled with Next.js · handwritten in Caveat, set in
-            JetBrains Mono
+            {NAME} · appaiya.raja@gmail.com
           </p>
         </footer>
       </div>
