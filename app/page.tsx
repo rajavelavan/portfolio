@@ -11,7 +11,7 @@ import { GmailIcon, LinkedinIcon, DiscordIcon } from "@/components/ui/icons";
 const NAME = "Rajavelavan Appaiyachetty";
 const CONTACT = {
   email: "appaiya.raja@gmail.com",
-  linkedin: "#", // placeholder
+  linkedin: "https://www.linkedin.com/in/rajavelappaiah/",
   discord: "#",  // placeholder
 };
 
@@ -527,7 +527,7 @@ export default function Home() {
               >
                 <LinkedinIcon className="w-6 h-6" />
               </a>
-              <a
+              {/* <a
                 href={CONTACT.discord}
                 className="text-ink-dim hover:text-accent transition-colors"
                 target="_blank"
@@ -535,7 +535,7 @@ export default function Home() {
                 title="Discord"
               >
                 <DiscordIcon className="w-6 h-6" />
-              </a>
+              </a> */}
             </div>
           </div>
         </Chapter>
