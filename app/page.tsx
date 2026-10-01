@@ -148,7 +148,7 @@ function Chapter({
   return (
     <section
       id={id}
-      className="scroll-mt-24 border-t border-edge/50 py-24 md:py-36"
+      className="scroll-mt-24 border-t border-edge/50 py-24 md:py-4"
     >
       <header className="mb-12 md:mb-16">
         <div className="flex items-center gap-4 font-mono text-xs uppercase tracking-[0.3em] text-accent">
@@ -225,7 +225,7 @@ export default function Home() {
                 end to end.
               </h1>
               <p className="mt-8 max-w-2xl text-sm leading-relaxed text-ink-dim md:text-base">
-                I&apos;m {NAME}, a full-stack engineer. This is a working notebook —
+                I&apos;m {NAME}, Software Engineer. This is a working notebook —
                 how I think about the whole path a request takes, from the pixel a
                 user clicks down through the API, the database, and the infrastructure
                 it all runs on. Lately the last chapter has been AI engineering.
