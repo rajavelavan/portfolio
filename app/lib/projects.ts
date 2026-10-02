@@ -1,5 +1,5 @@
-import type { Project, ProjectType } from '@/types/project';
-import { projects } from '@/data/projects';
+import type { Project, ProjectType } from '../types/project';
+import { projects } from '../data/projects';
 
 /** Every project, unfiltered. */
 export const getAllProjects = (): Project[] => projects;

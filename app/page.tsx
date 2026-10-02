@@ -1,201 +1,35 @@
-import type { Project } from "@/types/project";
-import { getProjectBySlug, getProjectsByType } from "@/lib/projects";
-import { ArchitectureDiagram } from "@/components/projects/architecture-diagram";
-import { StackDiagram } from "@/components/projects/stack-diagram";
-import { PixelProfile } from "@/components/ui/pixel-profile";
-import { GmailIcon, LinkedinIcon, DiscordIcon } from "@/components/ui/icons";
+import { getProjectBySlug, getProjectsByType } from "./lib/projects";
+import { NAME, CONTACT } from "./data/constants";
+import { learningNotes } from "./data/learning-notes";
+import { Chapter } from "./components/layout/chapter";
+import { ProjectCard } from "./components/projects/project-card";
+import { DeepDive } from "./components/projects/deep-dive";
+import { ArchitectureDiagram } from "./components/projects/architecture-diagram";
+import { StackDiagram } from "./components/projects/stack-diagram";
+import { RequestPathDiagram } from "./components/projects/request-path-diagram";
+import { SecurityAgentDiagram } from "./components/projects/security-agent-diagram";
+import { CicdPipelineDiagram } from "./components/projects/cicd-pipeline-diagram";
+import { RagAgentDiagram } from "./components/projects/rag-agent-diagram";
+import { NotebookDoodleClient } from "./components/projects/notebook-doodle-client";
 
-/* ------------------------------------------------------------------
-   TODO: confirm display name / links before publishing.
-   ------------------------------------------------------------------ */
-const NAME = "Rajavelavan Appaiyachetty";
-const CONTACT = {
-  email: "appaiya.raja@gmail.com",
-  linkedin: "https://www.linkedin.com/in/rajavelappaiah/",
-  discord: "#",  // placeholder
-};
 
-/* ==================================================================
-   Primitives — the notebook's vocabulary
-   ================================================================== */
 
-/** An unfilled diagram slot. Renders the bare `.sketch-placeholder`
- *  div our custom diagrams will replace, plus a caption describing it. */
-function Sketch({ caption }: { caption: string }) {
-  return (
-    <figure className="space-y-3">
-      <div className="sketch-placeholder" />
-      <figcaption className="font-mono text-xs leading-relaxed text-ink-dim">
-        <span className="text-accent">▲</span> {caption}
-      </figcaption>
-    </figure>
-  );
-}
-
-function TechRow({ items }: { items: string[] }) {
-  return (
-    <ul className="flex flex-wrap gap-2">
-      {items.map((t) => (
-        <li
-          key={t}
-          className="rounded border border-edge px-2 py-0.5 font-mono text-xs text-ink-dim"
-        >
-          {t}
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-/** Numbered architecture note, as it'd sit in a margin. */
-function NoteList({ items }: { items: string[] }) {
-  return (
-    <ol className="space-y-3 text-sm leading-relaxed text-ink-dim">
-      {items.map((note, i) => (
-        <li key={i} className="flex gap-3">
-          <span className="font-mono text-xs text-accent">
-            {String(i + 1).padStart(2, "0")}
-          </span>
-          <span>{note}</span>
-        </li>
-      ))}
-    </ol>
-  );
-}
-
-function ProjectCard({ project }: { project: Project }) {
-  return (
-    <article className="flex flex-col gap-4 rounded-lg border border-edge bg-canvas-raised/60 p-6">
-      <div className="flex items-baseline justify-between gap-4">
-        <h3 className="font-hand text-2xl leading-none text-ink">
-          {project.title}
-        </h3>
-        <span className="shrink-0 font-mono text-[0.65rem] uppercase tracking-wider text-accent">
-          {project.category}
-        </span>
-      </div>
-
-      <div className="sketch-placeholder" />
-
-      <div className="space-y-2 text-sm leading-relaxed text-ink-dim">
-        {project.description.map((line, i) => (
-          <p key={i}>{line}</p>
-        ))}
-      </div>
-
-      <TechRow items={project.techStack} />
-    </article>
-  );
-}
-
-/** Sticky-scroll deep dive: the narrative pins to the side while the
- *  stacked diagrams scroll past it. */
-function DeepDive({
-  project,
-  children,
-}: {
-  project: Project;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="grid gap-10 md:grid-cols-[minmax(0,20rem)_1fr] md:items-start md:gap-16">
-      {/* pinned narrative */}
-      <div className="md:sticky md:top-24 md:self-start rounded-lg border border-edge bg-canvas-raised/60 p-6">
-        <h3 className="font-hand text-3xl leading-none text-ink">
-          {project.title}
-        </h3>
-        <p className="mt-2 font-mono text-[0.65rem] uppercase tracking-wider text-accent">
-          {project.category}
-        </p>
-
-        <div className="mt-5 space-y-2 text-sm leading-relaxed text-ink-dim">
-          {project.description.map((line, i) => (
-            <p key={i}>{line}</p>
-          ))}
-        </div>
-
-        <div className="mt-5">
-          <NoteList items={project.architectureNotes} />
-        </div>
-
-        <div className="mt-6">
-          <TechRow items={project.techStack} />
-        </div>
-      </div>
-
-      {/* scrolling diagrams */}
-      <div className="space-y-14 md:space-y-28">{children}</div>
-    </div>
-  );
-}
-
-/** Wraps every numbered chapter with its rule + kicker + heading. */
-function Chapter({
-  id,
-  no,
-  kicker,
-  title,
-  lead,
-  children,
-}: {
-  id: string;
-  no: string;
-  kicker: string;
-  title: string;
-  lead?: React.ReactNode;
-  children: React.ReactNode;
-}) {
-  return (
-    <section
-      id={id}
-      className="scroll-mt-24 border-t border-edge/50 py-24 md:py-4"
-    >
-      <header className="mb-12 md:mb-16">
-        <div className="flex items-center gap-4 font-mono text-xs uppercase tracking-[0.3em] text-accent">
-          <span>{no}</span>
-          <span className="h-px flex-1 bg-edge" />
-          <span>{kicker}</span>
-        </div>
-        <h2 className="mt-6 font-hand text-4xl leading-tight text-ink md:text-6xl">
-          {title}
-        </h2>
-        {lead ? (
-          <p className="mt-5 max-w-2xl text-sm leading-relaxed text-ink-dim md:text-base">
-            {lead}
-          </p>
-        ) : null}
-      </header>
-      {children}
-    </section>
-  );
-}
-
+import { TechRow } from "./components/ui/tech-row";
+import { NoteList } from "./components/ui/note-list";
+import { PixelProfile } from "./components/ui/pixel-profile";
+import { 
+  GmailIcon, 
+  LinkedinIcon,
+  DiscordIcon,
+  GithubIcon,
+  HackerRankIcon,
+  LeetCodeIcon,
+  MediumIcon,
+  ResumeIcon
+} from "./components/ui/icons";
 /* ==================================================================
    The narrative — one page, eight chapters
    ================================================================== */
-
-const learningNotes = [
-  {
-    date: "2026-08-28",
-    body: "RAG quality is an eval problem, not a prompt problem. Build the eval set before touching the retriever.",
-  },
-  {
-    date: "2026-08-19",
-    body: "Agent tools should fail loudly and return structured errors — the model recovers far better than from a stack trace.",
-  },
-  {
-    date: "2026-08-05",
-    body: "Prompt caching changes how you structure a long system prompt: stable prefix, volatile suffix.",
-  },
-  {
-    date: "2026-07-22",
-    body: "Streaming isn't a UI nicety. It resets the perceived latency budget for the whole request.",
-  },
-  {
-    date: "2026-07-10",
-    body: "Trace every model call. You cannot debug what you cannot replay.",
-  },
-];
 
 export default function Home() {
   const personal = getProjectsByType("personal");
@@ -205,7 +39,6 @@ export default function Home() {
   const fileUpload = getProjectBySlug("file-upload-ai-analysis");
   const secAgent = getProjectBySlug("autonomous-cloud-security-agent");
   const gateway = getProjectBySlug("cryptographic-ai-governance-gateway");
-
   return (
     <main className="flex-1">
       <div className="mx-auto w-full max-w-5xl px-6 md:px-10">
@@ -266,8 +99,7 @@ export default function Home() {
               <TechRow items={["Angular", "React", "Express", "MySQL", "REST"]} />
             </div>
             <div className="space-y-14">
-              <Sketch caption="the request path — browser → Express route → MySQL → response" />
-              <Sketch caption="layered view — presentation / application / data / infrastructure, and what crosses each boundary" />
+              <RequestPathDiagram />
             </div>
           </div>
         </Chapter>
@@ -303,9 +135,7 @@ export default function Home() {
             ) : null}
             {secAgent ? (
               <DeepDive project={secAgent}>
-                <Sketch caption="ingestion — alert source → FastAPI endpoint → normalised finding on a queue" />
-                <Sketch caption="agent loop — LangChain orchestrates Gemini: reason → call an enrichment/remediation tool → observe → repeat" />
-                <Sketch caption="human-in-the-loop — proposed remediation → approval gate → execute, with the full reasoning trace on the dashboard" />
+                <SecurityAgentDiagram />
               </DeepDive>
             ) : null}
           </div>
@@ -331,7 +161,7 @@ export default function Home() {
                 </h3>
 
                 <div className="mt-5 space-y-2 text-sm leading-relaxed text-ink-dim">
-                  {org.description.map((line, i) => (
+                  {org.description.map((line: string, i: number) => (
                     <p key={i}>{line}</p>
                   ))}
                 </div>
@@ -394,8 +224,7 @@ export default function Home() {
               />
             </div>
             <div className="space-y-14">
-              <Sketch caption="pipeline — commit → Jenkins: build image → test → push to registry → deploy on EC2" />
-              <Sketch caption="runtime topology — EC2 host running Docker containers, S3 for objects, a managed database for state" />
+              <CicdPipelineDiagram />
             </div>
           </div>
 
@@ -463,8 +292,7 @@ export default function Home() {
               />
             </div>
             <div className="space-y-14">
-              <Sketch caption="RAG — documents → chunk → embed → vector store → retrieve top-k → generate a grounded answer" />
-              <Sketch caption="agent — model + tools + memory in a loop, with a guardrail and an approval gate on side effects" />
+              <RagAgentDiagram />
             </div>
           </div>
         </Chapter>
@@ -490,7 +318,7 @@ export default function Home() {
               </article>
             ))}
             <div className="md:col-span-2">
-              <Sketch caption="margin doodle — the reading queue: eval harnesses, retrieval tuning, tracing infrastructure" />
+              <NotebookDoodleClient/>
             </div>
           </div>
         </Chapter>
@@ -503,46 +331,53 @@ export default function Home() {
           title="Close the notebook — let's talk."
           lead="If any chapter here matches something you're building, I'd like to hear about it."
         >
-          <div className="relative min-h-[120px] flex items-end">
-            <p className="text-sm leading-relaxed text-ink-dim md:text-base max-w-xl pr-16">
-              I&apos;m looking for work where the whole path matters — where
+          <div className="space-y-10">
+            <p className="text-sm leading-relaxed text-ink-dim md:text-base max-w-xl">
+              I&apos;m looking for work where the whole path matters &mdash; where
               someone still has to hold the UI, the API, the data, and the
-              infrastructure in one head — and increasingly where that head also
+              infrastructure in one head &mdash; and increasingly where that head also
               has to reason about a model in the loop.
             </p>
-            <div className="absolute bottom-0 right-0 flex flex-col gap-5">
-              <a
-                href={`mailto:${CONTACT.email}`}
-                className="text-ink-dim hover:text-accent transition-colors"
-                title="Email"
-              >
-                <GmailIcon className="w-6 h-6" />
-              </a>
-              <a
-                href={CONTACT.linkedin}
-                className="text-ink-dim hover:text-accent transition-colors"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="LinkedIn"
-              >
-                <LinkedinIcon className="w-6 h-6" />
-              </a>
-              {/* <a
-                href={CONTACT.discord}
-                className="text-ink-dim hover:text-accent transition-colors"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Discord"
-              >
-                <DiscordIcon className="w-6 h-6" />
-              </a> */}
+
+            <div className="flex flex-col gap-4">
+              {[
+                { href: `mailto:${CONTACT.email}`, label: "appaiya.raja@gmail.com", icon: GmailIcon },
+                { href: CONTACT.linkedin, label: "LinkedIn", icon: LinkedinIcon, external: true },
+                { href: CONTACT.github, label: "GitHub", icon: GithubIcon, external: true },
+                { href: CONTACT.discord, label: "Discord", icon: DiscordIcon, external: true },
+                { href: CONTACT.hackerrank, label: "HackerRank", icon: HackerRankIcon, external: true },
+                { href: CONTACT.leetcode, label: "LeetCode", icon: LeetCodeIcon, external: true },
+                { href: CONTACT.medium, label: "Medium", icon: MediumIcon, external: true },
+              ].map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="inline-flex items-center gap-3 text-ink-dim hover:text-accent transition-colors w-fit"
+                  {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                  aria-label={link.label}
+                >
+                  <link.icon className="w-5 h-5 shrink-0" />
+                  <span className="font-mono text-sm">{link.label}</span>
+                </a>
+              ))}
             </div>
+
+            <a
+              href={CONTACT.resume}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-lg border border-edge bg-canvas-raised/60 px-6 py-3 font-mono text-sm text-ink transition-colors hover:border-accent hover:text-accent w-fit"
+              aria-label="View Resume"
+            >
+              <ResumeIcon className="w-4 h-4" />
+              <span>View Resume</span>
+            </a>
           </div>
         </Chapter>
 
         <footer className="border-t border-edge/50 py-12 font-mono text-xs text-ink-dim">
           <p>
-            {NAME} · appaiya.raja@gmail.com
+            {NAME} · {CONTACT.email}
           </p>
         </footer>
       </div>

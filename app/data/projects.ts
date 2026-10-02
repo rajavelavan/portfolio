@@ -1,4 +1,4 @@
-import type { Project } from '@/types/project';
+import type { Project } from '../types/project';
 
 export const projects: Project[] = [
   // ─── Organization ────────────────────────────────────────────────
@@ -38,6 +38,7 @@ export const projects: Project[] = [
     ],
     category: 'Full-Stack Platform',
     type: 'personal',
+    githubUrl: '#',
     techStack: ['React', 'Redux', 'Node.js', 'Express', 'MongoDB'],
     architectureNotes: [
       'Redux centralises cart, catalogue, and auth state on the React client.',
@@ -53,6 +54,7 @@ export const projects: Project[] = [
     ],
     category: 'AI / ML',
     type: 'personal',
+    githubUrl: '#',
     techStack: ['Next.js', 'TypeScript', 'AWS S3', 'MongoDB', 'OpenAI API'],
     architectureNotes: [
       'Next.js App Router serves both UI and API routes; uploads stream to AWS S3 via pre-signed URLs.',
@@ -69,6 +71,7 @@ export const projects: Project[] = [
     ],
     category: 'Security',
     type: 'personal',
+    githubUrl: '#',
     techStack: ['Python', 'FastAPI', 'LangChain', 'Google Gemini', 'React'],
     architectureNotes: [
       'FastAPI service exposes an alert-ingestion endpoint and an agent-run API.',
@@ -85,6 +88,7 @@ export const projects: Project[] = [
     ],
     category: 'Security',
     type: 'personal',
+    githubUrl: '#',
     techStack: ['Python', 'FastAPI'],
     architectureNotes: [
       'Fully stateless FastAPI proxy — horizontally scalable, no session store.',
@@ -101,6 +105,7 @@ export const projects: Project[] = [
     ],
     category: 'Security',
     type: 'personal',
+    githubUrl: '#',
     techStack: ['Next.js', 'React', 'TypeScript', 'MongoDB'],
     architectureNotes: [
       'Next.js App Router route handlers implement the auth API; React drives the flows.',
@@ -116,6 +121,7 @@ export const projects: Project[] = [
     description: ['Experiment — a minimal web email client / threaded inbox UI.'],
     category: 'Full-Stack Platform',
     type: 'experiment',
+    githubUrl: '#',
     techStack: ['Next.js', 'TypeScript'],
     architectureNotes: ['Stub — exploring threaded-inbox layout and message state.'],
   },
@@ -125,6 +131,7 @@ export const projects: Project[] = [
     description: ['Experiment — containerising a sample app with Docker.'],
     category: 'Infrastructure',
     type: 'experiment',
+    githubUrl: '#',
     techStack: ['Docker'],
     architectureNotes: ['Stub — multi-stage builds and Compose networking.'],
   },
@@ -134,6 +141,7 @@ export const projects: Project[] = [
     description: ['Experiment — hosting, auth, and data via AWS Amplify.'],
     category: 'Infrastructure',
     type: 'experiment',
+    githubUrl: '#',
     techStack: ['AWS Amplify', 'React'],
     architectureNotes: ['Stub — Amplify hosting, auth, and data categories.'],
   },
@@ -143,6 +151,7 @@ export const projects: Project[] = [
     description: ['Experiment — a Jenkins pipeline for build / test / deploy.'],
     category: 'Infrastructure',
     type: 'experiment',
+    githubUrl: '#',
     techStack: ['Jenkins'],
     architectureNotes: ['Stub — declarative pipeline, stages, and credentials.'],
   },

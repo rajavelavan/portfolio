@@ -6,7 +6,7 @@ import {
   RoughShape,
   SketchText,
   SKETCH_PALETTE,
-} from "@/components/ui/animated-sketch";
+} from "../ui/animated-sketch";
 
 const BOX = { w: 190, h: 118 } as const;
 const Y = 118;

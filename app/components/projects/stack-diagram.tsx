@@ -6,7 +6,7 @@ import {
   RoughShape,
   SketchText,
   SKETCH_PALETTE,
-} from "@/components/ui/animated-sketch";
+} from "../ui/animated-sketch";
 
 const LAYER = { x: 190, w: 440, h: 92 } as const;
 const CENTER = LAYER.x + LAYER.w / 2;
