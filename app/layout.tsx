@@ -3,6 +3,7 @@ import { Caveat, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SidebarNav } from "./components/layout/sidebar-nav";
 import { SocialBar } from "./components/ui/social-bar";
+import { getLastCommitDate } from "./lib/github";
 import "./globals.css";
 
 /* Handwriting — notes, headings, marginalia. Variable font (400–700). */
@@ -49,11 +50,13 @@ export const metadata: Metadata = {
 };
 
 // Next 15+ compatible Layout Props
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const lastCommitDate = await getLastCommitDate();
+
   return (
     <html
       lang="en"
@@ -67,7 +70,7 @@ export default function RootLayout({
           Skip to content
         </a>
         <div className="fixed top-4 right-4 z-50 font-mono text-[0.6rem] tracking-wider text-ink-dim/60 select-none pointer-events-none">
-          This notebook is a living document
+          This is a Living Notebook - last updated at {lastCommitDate}
         </div>
         <SidebarNav />
         {children}

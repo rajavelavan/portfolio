@@ -344,7 +344,9 @@ export default function Home() {
                 { href: `mailto:${CONTACT.email}`, label: "appaiya.raja@gmail.com", icon: GmailIcon },
                 { href: CONTACT.linkedin, label: "LinkedIn", icon: LinkedinIcon, external: true },
                 { href: CONTACT.github, label: "GitHub", icon: GithubIcon, external: true },
-                // { href: CONTACT.discord, label: "Discord", icon: DiscordIcon, external: true },
+                // ...(CONTACT.discord && CONTACT.discord !== "#"
+                //   ? [{ href: CONTACT.discord, label: "Discord", icon: DiscordIcon, external: true }]
+                //   : []),
                 { href: CONTACT.hackerrank, label: "HackerRank", icon: HackerRankIcon, external: true },
                 { href: CONTACT.leetcode, label: "LeetCode", icon: LeetCodeIcon, external: true },
                 { href: CONTACT.medium, label: "Medium", icon: MediumIcon, external: true },
