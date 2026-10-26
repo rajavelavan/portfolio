@@ -11,7 +11,7 @@ const navItems = [
   { id: "experience", title: "Professional Experience", subtitle: "Organization work" },
   { id: "cloud", title: "The Cloud", subtitle: "Infrastructure & CI/CD" },
   { id: "next-layer", title: "The Next Layer", subtitle: "AI engineering" },
-  { id: "notebook", title: "Engineering Notebook", subtitle: "Learning notes" },
+  // Hidden for now: { id: "notebook", title: "Engineering Notebook", subtitle: "Learning notes" },
   { id: "contact", title: "Contact", subtitle: "Let's talk" }
 ];
 
