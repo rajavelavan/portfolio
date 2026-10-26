@@ -1,6 +1,7 @@
 import type { Project } from "../../types/project";
 import { NoteList } from "../ui/note-list";
 import { TechRow } from "../ui/tech-row";
+import { GithubIcon } from "../ui/icons";
 
 /** Sticky-scroll deep dive: the narrative pins to the side while the
  *  stacked diagrams scroll past it. */
@@ -35,6 +36,22 @@ export function DeepDive({
         <div className="mt-6">
           <TechRow items={project.techStack} />
         </div>
+
+        {project.githubUrl && project.githubUrl !== "#" && (
+          <div className="mt-6 border-t border-edge/60 pt-4">
+            <a
+              href={project.githubUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 font-mono text-xs text-ink-dim transition-colors hover:text-accent"
+              aria-label={`GitHub repository for ${project.title}`}
+            >
+              <GithubIcon className="h-4 w-4" />
+              <span>View Repository</span>
+              <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+        )}
       </div>
 
       {/* scrolling diagrams */}

@@ -112,10 +112,23 @@ export default function Home() {
           title="Personal builds — each one a full slice."
           lead="These are the projects I build to learn a layer properly. Every one of them is wired front to back; none of them stops at the UI."
         >
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="space-y-8 md:space-y-10">
             {personal.map((project) => (
               <ProjectCard key={project.slug} project={project} />
             ))}
+          </div>
+
+          <div className="mt-14 flex justify-center pb-8">
+            <a
+              href="https://github.com/rajavelavan?tab=repositories"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-lg border border-edge bg-canvas-raised/60 px-6 py-3 font-mono text-xs text-ink transition-all hover:border-accent hover:text-accent hover:bg-canvas-raised"
+            >
+              <GithubIcon className="h-4 w-4" />
+              <span>Explore all repositories on GitHub</span>
+              <span aria-hidden="true" className="text-accent">→</span>
+            </a>
           </div>
         </Chapter>
 
@@ -238,7 +251,18 @@ export default function Home() {
                   key={exp.slug}
                   className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 py-3"
                 >
-                  <span className="font-hand text-xl text-ink">{exp.title}</span>
+                  {exp.githubUrl && exp.githubUrl !== "#" ? (
+                    <a
+                      href={exp.githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-hand text-xl text-ink transition-colors hover:text-accent"
+                    >
+                      {exp.title} <span className="font-mono text-xs opacity-60">↗</span>
+                    </a>
+                  ) : (
+                    <span className="font-hand text-xl text-ink">{exp.title}</span>
+                  )}
                   <span className="text-sm text-ink-dim">
                     {exp.description[0]}
                   </span>
@@ -297,7 +321,8 @@ export default function Home() {
           </div>
         </Chapter>
 
-        {/* ===== 07 · ENGINEERING NOTEBOOK ==================== */}
+        {/* ===== 07 · ENGINEERING NOTEBOOK (Hidden for now) ========== */}
+        {/*
         <Chapter
           id="notebook"
           no="07"
@@ -322,11 +347,12 @@ export default function Home() {
             </div>
           </div>
         </Chapter>
+        */}
 
-        {/* ===== 08 · CONTACT ================================= */}
+        {/* ===== 07 · CONTACT ================================= */}
         <Chapter
           id="contact"
-          no="08"
+          no="07"
           kicker="Contact"
           title="Close the notebook — let's talk."
           lead="If any chapter here matches something you're building, I'd like to hear about it."
