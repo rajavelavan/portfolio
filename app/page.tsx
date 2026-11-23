@@ -112,7 +112,7 @@ export default function Home() {
           title="Personal builds — each one a full slice."
           lead="These are the projects I build to learn a layer properly. Every one of them is wired front to back; none of them stops at the UI."
         >
-          <div className="space-y-8 md:space-y-10">
+          <div className="space-y-6 md:space-y-8">
             {personal.map((project) => (
               <ProjectCard key={project.slug} project={project} />
             ))}
